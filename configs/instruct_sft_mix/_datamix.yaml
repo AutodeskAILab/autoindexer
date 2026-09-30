@@ -1,0 +1,120 @@
+# @package _global_
+
+seed_everything: 42
+
+# SFT mix: general + code + math + fewshot_pack + replay; weights are relative.
+data:
+  _target_: autoindexer.domains.hf_datasets.load_instruction_dataset_mix
+  tokenizer_name: ${model.model_name}
+  num_val_samples_per_source: 500
+  seed: ${seed_everything}
+  # Match eval `apply_chat_template(..., enable_thinking=False)`.
+  enable_thinking: false
+  sources:
+    # -- General-purpose instructions (~39% of the mix) --
+    - name: alpaca
+      dataset_name: tatsu-lab/alpaca
+      format: alpaca
+      weight: 15
+    - name: dolly-15k
+      dataset_name: databricks/databricks-dolly-15k
+      format: alpaca
+      # Dolly uses `context` instead of `input`.
+      input_column: context
+      output_column: response
+      weight: 10
+    - name: wizardlm-evol-instruct
+      dataset_name: WizardLMTeam/WizardLM_evol_instruct_70k
+      format: alpaca
+      input_column: null
+      weight: 20
+    - name: ultrachat
+      dataset_name: HuggingFaceH4/ultrachat_200k
+      split: train_sft
+      format: messages
+      weight: 25
+
+    # -- Coding instructions (~39% of the mix) --
+    - name: codealpaca
+      dataset_name: sahil2801/CodeAlpaca-20k
+      format: alpaca
+      weight: 10
+    - name: evol-instruct-code
+      dataset_name: nickrosh/Evol-Instruct-Code-80k-v1
+      format: alpaca
+      input_column: null
+      weight: 20
+    - name: magicoder-oss-instruct
+      dataset_name: ise-uiuc/Magicoder-OSS-Instruct-75K
+      format: alpaca
+      instruction_column: problem
+      input_column: null
+      output_column: solution
+      weight: 20
+    - name: glaive-code-assistant
+      dataset_name: glaiveai/glaive-code-assistant-v3
+      format: alpaca
+      instruction_column: question
+      input_column: null
+      output_column: answer
+      weight: 20
+
+    # -- Math instructions (~11% of the mix) --
+    - name: metamathqa
+      dataset_name: meta-math/MetaMathQA
+      format: alpaca
+      instruction_column: query
+      input_column: null
+      output_column: response
+      weight: 20
+
+    # CPT-style replay for general capability (~11%).
+    - name: dclm-replay
+      dataset_name: mlfoundations/dclm-baseline-1.0-parquet
+      data_dir: filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data
+      format: replay
+      weight: 10
+    - name: starcoder-python-replay
+      dataset_name: bigcode/starcoderdata
+      data_dir: python
+      text_column: content
+      format: replay
+      weight: 10
+
+data_collator:
+  _target_: autoindexer.domains.hf_datasets.SFTCollator
+  tokenizer_name: ${model.model_name}
+  max_length: 2048
+
+trainer:
+  bf16: true
+  # Smoke-test default; override `num_train_samples` for a full run.
+  num_train_samples: 100_000
+  max_grad_norm: 1.0
+  gradient_accumulation_steps: 1
+  num_eval_samples: 512
+  dataloader_num_workers: 4
+  # Keep dataloader workers alive across restarts (fewer Hub reconnect stalls).
+  dataloader_persistent_workers: true
+  # Streaming dataset: step-based eval/save (no true epochs).
+  eval_strategy: steps
+  eval_steps: 2_500
+  save_strategy: steps
+  save_steps: 2_500
+  monitoring_log_interval: 1_000
+  monitoring_options:
+    - token_accuracy
+    - perplexity
+    - throughput
+  generation_config:
+    min_length: 0
+    max_length: 2048
+    do_sample: true
+    temperature: 1.0
+    top_k: 50
+    top_p: 0.95
+  log_sample_freq: 1
+
+model:
+  _target_: autoindexer.models.wrappers.hf_module.build_hf_model
+  # lora: r: 32 lora_alpha: 64 lora_dropout: 0.05 target_modules: all-linear bias: none

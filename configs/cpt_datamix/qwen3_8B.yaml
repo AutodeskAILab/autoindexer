@@ -1,0 +1,28 @@
+# @package _global_
+
+defaults:
+  - _datamix
+  - _self_
+
+model:
+  model_name: Qwen/Qwen3-8B-Base
+  pretrained: true
+  gradient_checkpointing: true
+  # Overrides the fp32 default to halve what each rank's shard occupies on a 22GB card
+  dtype: bfloat16
+
+# Qwen3 pad token is `<|endoftext|>`; no `pad_token_id` override needed.
+
+trainer:
+  learning_rate: 1e-4
+  weight_decay: 0.01
+  warmup_steps: 1000
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  generation_config:
+    # `<|endoftext|>`, which Qwen3 uses for EOS *and* padding
+    eos_token_id: 151643
+    do_sample: true
+    # Qwen3's recommended sampling for the *base* (non-instruct) models.
+    temperature: 0.7
+    top_p: 0.8

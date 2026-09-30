@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autoindexer"
+version = "0.1.0"
+description = "AutoIndexer training pipeline: Hydra configs, transformers.Trainer models, and Accelerate distributed training."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "torch==2.8.0+cu128",
+    "torchvision==0.23.0+cu128",
+    "torchaudio==2.8.0+cu128",
+    "matplotlib>=3.9.2",
+    "numpy>=2.1.1",
+    "pandas>=2.2.3",
+    "seaborn>=0.13.2",
+    "tqdm>=4.66.5",
+    "hydra-core>=1.3.2",
+    "transformers==4.57.0",
+    "datasets>=5.0.0",
+    "tensorboard>=2.20.0",
+    "jsonargparse[signatures]>=4.27.0",
+    "fsspec[s3]>=2024.12.0",
+    "comet-ml>=3.31.0",
+    "pynvml",
+    "pydantic",
+    "einops",
+    "transformers[torch]",
+    "quack-kernels>=0.6.4",
+    "accelerate",
+    "deepspeed>=0.14.0",
+    "peft==0.17.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "flake8",
+    "pytest",
+]
+
+gpu = [
+    "flash-attn-4==4.0.0b29",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+autoindexer = ["**/*.json"]

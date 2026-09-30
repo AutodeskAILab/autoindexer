@@ -1,0 +1,119 @@
+# @package _global_
+
+seed_everything: 42
+
+# CPT mix: web text + code + math; `weight` values are relative. Optional `local_dir` needs `data.local_data_dir`.
+data:
+  _target_: autoindexer.domains.hf_datasets.load_dataset_mix
+  num_val_samples_per_source: 500
+  seed: ${seed_everything}
+  sources:
+    # Parquet DCLM mirror (used by the S3 mirror script).
+    - name: dclm-baseline
+      dataset_name: mlfoundations/dclm-baseline-1.0-parquet
+      data_dir: filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data
+      local_dir: dclm-baseline
+      weight: 30
+    - name: fineweb-edu
+      dataset_name: HuggingFaceFW/fineweb-edu
+      local_dir: fineweb-edu
+      weight: 15
+    - name: slimpajama
+      dataset_name: AlppAI/SlimPajama-chunked
+      local_dir: slimpajama
+      weight: 25
+    - name: openwebmath
+      dataset_name: open-web-math/open-web-math
+      local_dir: openwebmath
+      weight: 5
+    # ~25% of the mix is code, split unevenly across languages (roughly by real-world usage) rather than evenly.
+    - name: starcoder-python
+      dataset_name: bigcode/starcoderdata
+      data_dir: python
+      local_dir: starcoderdata/python
+      text_column: content
+      weight: 7
+    - name: starcoder-javascript
+      dataset_name: bigcode/starcoderdata
+      data_dir: javascript
+      local_dir: starcoderdata/javascript
+      text_column: content
+      weight: 4
+    - name: starcoder-java
+      dataset_name: bigcode/starcoderdata
+      data_dir: java
+      local_dir: starcoderdata/java
+      text_column: content
+      weight: 4
+    - name: starcoder-cpp
+      dataset_name: bigcode/starcoderdata
+      data_dir: cpp
+      local_dir: starcoderdata/cpp
+      text_column: content
+      weight: 3
+    - name: starcoder-typescript
+      dataset_name: bigcode/starcoderdata
+      data_dir: typescript
+      local_dir: starcoderdata/typescript
+      text_column: content
+      weight: 2
+    - name: starcoder-c
+      dataset_name: bigcode/starcoderdata
+      data_dir: c
+      local_dir: starcoderdata/c
+      text_column: content
+      weight: 2
+    - name: starcoder-go
+      dataset_name: bigcode/starcoderdata
+      data_dir: go
+      local_dir: starcoderdata/go
+      text_column: content
+      weight: 2
+    - name: starcoder-shell
+      dataset_name: bigcode/starcoderdata
+      data_dir: shell
+      local_dir: starcoderdata/shell
+      text_column: content
+      weight: 1
+
+data_collator:
+  _target_: autoindexer.domains.hf_datasets.Collator
+  tokenizer_name: ${model.model_name}
+  text_column: text
+  max_length: 2048
+
+trainer:
+  bf16: true
+  # Smoke-test default; override `num_train_samples` for a full run.
+  num_train_samples: 100_000
+  max_grad_norm: 1.0
+  gradient_accumulation_steps: 1
+  num_eval_samples: 512
+  dataloader_num_workers: 4
+  # Keep dataloader workers alive across restarts (fewer Hub reconnect stalls).
+  dataloader_persistent_workers: true
+  # Streaming dataset: step-based eval/save (no true epochs).
+  eval_strategy: steps
+  eval_steps: 2_500
+  save_strategy: steps
+  save_steps: 2_500
+  monitoring_log_interval: 1_000
+  monitoring_options:
+    - token_accuracy
+    - perplexity
+    - throughput
+  generation_config:
+    min_length: 0
+    max_length: 2048
+    do_sample: true
+    temperature: 1.0
+    top_k: 50
+    top_p: 0.95
+  log_sample_freq: 1
+
+model:
+  _target_: autoindexer.models.wrappers.hf_module.build_hf_model
+  # lora:
+  #   r: 32
+  #   lora_alpha: 64
+  #   target_modules: all-linear

@@ -1,0 +1,58 @@
+# @package _global_
+# AutoIndexer SFT on Qwen3-8B (`python main.py train -f configs/instruct_sft_mix/autoindexer_8B.yaml`).
+
+defaults:
+  - _datamix
+  - _self_
+
+model:
+  model_name: autoindexer_qwen3
+  pretrained: true
+  pretrained_model_name_or_path: Qwen/Qwen3-8B
+  gradient_checkpointing: true
+  dtype: bfloat16
+  model_config:
+    attn_implementation: autoindexer_cutedsl
+    max_seq_length: 3072
+    mean_num_edits: 50
+    mean_insert: 5
+    mean_delete: 5
+    mean_extend: 40
+    inplace_edits: false
+    sort_edits: false
+    perturb_prob: 0.75
+    edit_type_ratio: [1, 1, 1]
+    marker_focal_gamma: 1.0
+    edit_lag_prob: 0.5
+    mean_edit_lag: 5
+    index_grad_ratio: 0.0
+    index_entropy_weight: 0.0
+    transplant_prob: 0.5
+    eos_token_id: 151643
+
+data:
+  tokenizer_name: ${model.pretrained_model_name_or_path}
+data_collator:
+  _target_: autoindexer.domains.hf_datasets.AutoIndexerSFTCollator
+  tokenizer_name: ${model.pretrained_model_name_or_path}
+
+trainer:
+  learning_rate: 1e-4
+  weight_decay: 0.01
+  warmup_steps: 1000
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  log_sample_freq: 1
+  # Token accuracy/perplexity need `logits`; AutoIndexer eval uses throughput only.
+  monitoring_options:
+    - throughput
+  generation_config:
+    # `<|endoftext|>`, which Qwen3 uses for EOS *and* padding.
+    eos_token_id: 151643
+    return_dict_in_generate: true
+    max_length: ${model.model_config.max_seq_length}
+    do_sample: true
+    # Qwen3's recommended sampling for the *base* (non-instruct) models.
+    temperature: 0.7
+    top_p: 0.8
+    marker_top_p: 1.0  # nucleus filtering for the marker head's own softmax -- see `AutoIndexerModelBase._sample`
