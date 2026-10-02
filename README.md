@@ -1,13 +1,10 @@
-# AutoIndexer
-
----
 
 [![Project Page](https://img.shields.io/badge/Project%20Page-GitHub-181717?logo=github)](https://github.com/AutodeskAILab/autoindexer-demo)
 [![Workshop Paper](https://img.shields.io/badge/Workshop_Paper-OpenReview-B31B1B?logo=openreview&logoColor=white)](https://openreview.net/pdf?id=QxsLMneprg)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Collection-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/collections/ADSKAILab/autoindexer)
+# AutoIndexer
 
 **AutoIndexer: Flexible-Order Decoding by Training Causal Models on Chains of Edits**
-
 
 If you find this repository helpful, please cite our [NeurIPS 2026 Workshop paper](https://openreview.net/pdf?id=QxsLMneprg):
 
