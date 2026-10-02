@@ -1,10 +1,10 @@
+# AutoIndexer
+
+**AutoIndexer: Flexible-Order Decoding by Training Causal Models on Chains of Edits**
 
 [![Project Page](https://img.shields.io/badge/Project%20Page-GitHub-181717?logo=github)](https://autodeskailab.github.io/autoindexer-demo/)
 [![Workshop Paper](https://img.shields.io/badge/Workshop_Paper-OpenReview-B31B1B?logo=openreview&logoColor=white)](https://openreview.net/pdf?id=QxsLMneprg)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Collection-FFD21E?logo=huggingface&logoColor=yellow)](https://huggingface.co/collections/ADSKAILab/autoindexer)
-# AutoIndexer
-
-**AutoIndexer: Flexible-Order Decoding by Training Causal Models on Chains of Edits**
 
 If you find this repository helpful, please cite our [NeurIPS 2026 Workshop paper](https://openreview.net/pdf?id=QxsLMneprg):
 
@@ -21,9 +21,9 @@ url={https://openreview.net/forum?id=QxsLMneprg}
 
 ### Overview of AutoIndexer
 
-![AutoIndexer Overview](./assets/AutoIndexer_overview.png)
-
 **AutoIndexer** trains causal language models on chains of edits so they can revise prior outputs in hindsight via insertions, substitutions, and deletions. The model predicts marker tokens that open and close edits and moves a cursor to start and end positions in the existing sequence, analogous to a text editor. 
+
+![AutoIndexer Overview](./assets/AutoIndexer_overview.png)
 
 #### Example of a successful context edit by AutoIndexer
 
