@@ -1,6 +1,40 @@
 # AutoIndexer
 
-**AutoIndexer** trains causal language models on chains of edits so they can revise prior outputs in hindsight via insertions, substitutions, and deletions. The model predicts marker tokens that open and close edits and moves a cursor to start and end positions in the existing sequence, analogous to a text editor. This repository provides [Hydra](https://hydra.cc/docs/intro/) configuration, [`transformers.Trainer`](https://huggingface.co/docs/transformers/en/main_classes/trainer) training, and [Accelerate](https://huggingface.co/docs/accelerate/index) scaling for continued pretraining and instruction tuning on Qwen3.
+---
+
+[![Project Page](https://img.shields.io/badge/Project%20Page-GitHub-181717?logo=github)](https://github.com/AutodeskAILab/autoindexer-demo)
+[![Workshop Paper](https://img.shields.io/badge/Workshop_Paper-OpenReview-B31B1B?logo=openreview&logoColor=white)](https://openreview.net/pdf?id=QxsLMneprg)
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Collection-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/collections/ADSKAILab/autoindexer)
+
+**AutoIndexer: Flexible-Order Decoding by Training Causal Models on Chains of Edits**
+
+
+If you find this repository helpful, please cite our [NeurIPS 2026 Workshop paper](https://openreview.net/pdf?id=QxsLMneprg):
+
+```bibtex
+@inproceedings{
+ishida2026autoindexer,
+title={AutoIndexer: Flexible-Order Decoding by Training Causal Models on Chains of Edits},
+author={Shu Ishida and Aliasghar Khani and Tianyu Zhang and The Cong Luong and James Seale Smith and Adam Gaier},
+booktitle={Beyond Next Token Prediction: Diffusion and Flow Models for Next-Generation Decoding},
+year={2026},
+url={https://openreview.net/forum?id=QxsLMneprg}
+}
+```
+
+### Overview of AutoIndexer
+
+![AutoIndexer Overview](./assets/AutoIndexer_overview.png)
+
+**AutoIndexer** trains causal language models on chains of edits so they can revise prior outputs in hindsight via insertions, substitutions, and deletions. The model predicts marker tokens that open and close edits and moves a cursor to start and end positions in the existing sequence, analogous to a text editor. 
+
+#### Example of a successful context edit by AutoIndexer
+
+![Example of a successful edit by AutoIndexer](./assets/exact_repair_355_starcoder-javascript.gif)
+
+---
+
+This repository provides [Hydra](https://hydra.cc/docs/intro/) configuration, [`transformers.Trainer`](https://huggingface.co/docs/transformers/en/main_classes/trainer) training, and [Accelerate](https://huggingface.co/docs/accelerate/index) scaling for continued pretraining and instruction tuning on Qwen3.
 
 ## Installation
 
