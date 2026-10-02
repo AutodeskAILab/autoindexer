@@ -1,5 +1,5 @@
 
-[![Project Page](https://img.shields.io/badge/Project%20Page-GitHub-181717?logo=github)](https://github.com/AutodeskAILab/autoindexer-demo)
+[![Project Page](https://img.shields.io/badge/Project%20Page-GitHub-181717?logo=github)](https://autodeskailab.github.io/autoindexer-demo/)
 [![Workshop Paper](https://img.shields.io/badge/Workshop_Paper-OpenReview-B31B1B?logo=openreview&logoColor=white)](https://openreview.net/pdf?id=QxsLMneprg)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Collection-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/collections/ADSKAILab/autoindexer)
 # AutoIndexer
@@ -28,6 +28,8 @@ url={https://openreview.net/forum?id=QxsLMneprg}
 #### Example of a successful context edit by AutoIndexer
 
 ![Example of a successful edit by AutoIndexer](./assets/exact_repair_355_starcoder-javascript.gif)
+
+Visit our [project page](https://autodeskailab.github.io/autoindexer-demo/) for more qualitative examples of AutoIndexer's self-edits.
 
 ---
 
