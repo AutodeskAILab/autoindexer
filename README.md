@@ -13,7 +13,7 @@ If you find this repository helpful, please cite our [NeurIPS 2026 Workshop pape
 ishida2026autoindexer,
 title={AutoIndexer: Flexible-Order Decoding by Training Causal Models on Chains of Edits},
 author={Shu Ishida and Aliasghar Khani and Tianyu Zhang and The Cong Luong and James Seale Smith and Adam Gaier},
-booktitle={Beyond Next Token Prediction: Diffusion and Flow Models for Next-Generation Decoding},
+booktitle={NeurIPS Workshop on Beyond Next Token Prediction},
 year={2026},
 url={https://openreview.net/forum?id=QxsLMneprg}
 }
